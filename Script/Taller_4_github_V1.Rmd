@@ -216,7 +216,10 @@ mod_het <- feols(B ~ globocoverage1 + globocoverage1*yrs_edu +rural + catholic +
                data = BD_1, 
                weights = BD_1$weight, 
                cluster = "amc_code")
-
-summary(mod_het)
+etable(mod_het,
+       title = "Efecto Globo en la Probabilidad de nacimientos con Efectos Heterogéneos por Años de Educación de la mujer",
+       keep = c("globocoverage1", "globocoverage1:yrs_edu"),
+       digits = 4)
 ```
 
+**Respuesta:**
