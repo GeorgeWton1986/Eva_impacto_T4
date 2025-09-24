@@ -12,7 +12,7 @@ output:
 
 En su artículo “Soap Operas and Fertility: Evidence from Brazil” , La Ferrara et al. (2012) estudian la influencia de la televisión, y específicamente de las telenovelas, sobre las preferencias de las mujeres respecto a sus preferencias sobre su vida reproductiva. En particular, aprovechan la llegada de una cadena de televisión (Globo) en ciertas áreas para estimar la probabilidad de dar a luz. Adicionalmente, evalúan la existencia de efectos heterogéneos en variables como la edad, nivel educativo y riqueza de las mujeres. Para responder sus preguntas, los autores usan la metodología de Diferencias en Diferencias con regresión y efectos fijos. 
 
-En este taller, ustedes realizarán algunas de las estimaciones hechas por los autores e interpretarán los resultados. Para esto, ustedes deben usar una submuestra aleatoria de la base de datos SoapOperas.dta, la cual fue usada por los autores.  Así, justo después de abrir la base de datos (la base completa), cada grupo debe eliminar aleatoriamente el 5% de las observaciones y usar la base restante.  La semilla que deben usar para que sus resultados sean replicables es su código de estudiante . Asegúrese de restringir la base de datos hasta el percentil 95 del tamaño del área (geoarea80) .
+En este taller, ustedes realizarán algunas de las estimaciones hechas por los autores e interpretarán los resultados. Para esto, ustedes deben usar una submuestra aleatoria de la base de datos SoapOperas.dta, la cual fue usada por los autores.  Así, justo después de abrir la base de datos (la base completa), cada grupo debe eliminar aleatoriamente el 5% de las observaciones y usar la base restante.  La semilla que deben usar para que sus resultados sean replicables es su código de estudiante. Asegúrese de restringir la base de datos hasta el percentil 95 del tamaño del área (geoarea80).
 
 Como su solución a este conjunto de problemas, proporcione un documento PDF con sus respuestas y el do file (u otro programa) que usó para resolverlo. Se recomienda tener respuestas tan breves como sea posible. Ciertas preguntas, sobre todo aquellas que preguntan por su opinión, pueden no tener una única respuesta correcta. Así, lo importante es que argumenten de manera coherente. 
 
@@ -23,46 +23,23 @@ Como su solución a este conjunto de problemas, proporcione un documento PDF con
 
 a)	Escriban la especificación principal de los autores (en niveles) y describan cada una de sus variables explicativas. 
 
-**Respuesta:** 
-
-b)	¿Cuál es el supuesto de identificación detrás de este modelo?
-
-**Respuesta:** 
-
-c)	Estime (1) el modelo sin controles y sin efectos fijos de área (2) sin controles, pero con efectos fijos de área (amc_code) (3) con controles  y con efectos fijos de área.
-
-**Nota:** para todos los modelos incluya efectos fijos de tiempo, ajuste por sobremuestreo (ponderando las observaciones por la variable weight) y clusterice errores por área. Luego presente y analice sus resultados (usando cluster () como opción de la regresión).
-
-**Respuesta:** 
-
-
-
-Manual avanzado de R markdown: https://rpubs.com/ricardo/14631 
-
-## Segundo Punto
-2. Mencione dos de los retos de identificación mencionados por los autores sobre esta estimación y la forma como se puede corregir con una técnica econométrica. (**Nota:** Puede encontrarlos en la introducción del artículo, página 3. 
-
-### Solución Segundo Punto
-
-**Respuesta:** 
-
-
-## Tercer Punto
-
-3.	Estime el modelo (3) del literal c, restringiendo los datos a aquellas mujeres con edad entre i) 15-24 ii) 25-34 iii) 35-44 presente sus resultados en una misma tabla con cada modelo en una columna distinta (3 modelos). 
-
-### Solución tercer Punto
+**Respuesta:** Los autores especifican el modelo de probabilidad lineal, de la siguiente manera:
 
 \begin{align}
-y_{ia} = \alpha+ \beta Treat_{ia} + X^T_{a}\gamma_1+\epsilon_{i} \quad \nonumber \\
+y_{ijt} = X_{ijt}\beta + \gamma G_{jt}+ \mu_{j}+ \lambda_{t}+\epsilon_{ijt} \quad \nonumber \\
 \end{align}
 
 Donde:
-- $y_{ia}$ es un resultado para el hogar $i$ en el área $a$.
-- $Treat_{ia}$ es una dicótoma que toma el valor de 1 si el hogar está ubicado en un área tratada.
-- $\beta$ es el efecto Intention to Treat (ITT). 
-- $X^T_{a}$ es un vector con dimensión.
-- $Kx1$ de variables de control.
+- $y_{ijt}$ Es igual a 1 si la mujer $i$ vive en el área $j$ y da a luz a un niño en año $t$.
+- $X_{ijt}$ Son los controles que varian en el tiempo del individuo y a nivel de AMC. 
+- $G_{jt}$ Es una dicotoma que toma el valor de 1, si el área $j$ recibe señal de Rede Globo al menos un año antes del año $t$.
+- $\mu_{j}$ Efectos fijos del área
+- $\lambda_{t}$ Efectos fijos de tiempo
+- $\epsilon_{ijt}$ es el término de error.
+
+b)	¿Cuál es el supuesto de identificación detrás de este modelo?
+
+**Respuesta:** El modelo de diferencias en diferencias (DiD) reconoce el supuesto de identificación mediante las tendencias paralelas. Esto significa, el cambio en la variable resultado para el grupo de control es igual al cambio en la variable resultado para el grupo de tratamiento, sino hubiera sido tratado. Por lo tanto, El cambio en la probabilidad de fertilidad esperada en el grupo de control (antes y después de que Globo llegue a las áreas tratadas) sería igual al cambio en la probabilidad de fertilidad esperada en el grupo tratado si este no hubiera recibido el tratamiento. $[E[y_{ijt}|G_{jt}=0,t=1]-E[y_{ijt}|G_{jt}=0,t=0]] - [[E[y_{ijt}|G_{jt}=1,t=1]-E[y_{ijt}|G_{jt}=1,t=0]]$
 
 ### Generalidades de R
 ```{r}
@@ -92,9 +69,9 @@ p_load(haven,   #Leer archivos .dta
 ### Transformación de datos en R
 ```{r}
 # Definir URL del repositorio
-github_url <- "https://raw.githubusercontent.com/GeorgeWton1986/Eva_impacto_T3/main"
+github_url <- "https://raw.githubusercontent.com/GeorgeWton1986/Eva_impacto_T4/main"
 # Cargar datos
-BD_0 <- read_dta(paste0(github_url, "/Data/data_1.dta"))
+BD_0 <- read_dta(paste0(github_url, "/Data/SoapOperas2.dta"))
 
 # Ver estructura de los datos
 #glimpse(BD_0)
@@ -104,121 +81,116 @@ BD_0 <- read_dta(paste0(github_url, "/Data/data_1.dta"))
 colnames(BD_0)
 ```
 
-### Desarrollo 
-```{r warning=FALSE, message=FALSE}
-#filtrar los datos de endline 1
-el1_data <- BD_0 %>% filter(sample1 == 1)
+c)	Estime (1) el modelo sin controles y sin efectos fijos de área (2) sin controles, pero con efectos fijos de área (amc_code) (3) con controles  y con efectos fijos de área.
 
-#Verificar que tenemos los datos correctos
-cat("Observaciones en endline 1:", nrow(el1_data), "\n")
+**Nota:** para todos los modelos incluya efectos fijos de tiempo, ajuste por sobremuestreo (ponderando las observaciones por la variable weight) y clusterice errores por área. Luego presente y analice sus resultados (usando cluster () como opción de la regresión).
 
-#Variables de control especificadas
-controls_formula <- "area_pop_base + area_business_total_base + 
-                      area_exp_pc_mean_base + area_literate_head_base + 
-                      area_literate_base + area_debt_total_base"
+```{r}
+# Incluir la semilla con mi código de estudiante
+set.seed(202415176)
 
-#Regresión Tabla 2 columna 1 spandana_1
-mod_1 <- feols(as.formula(paste("spandana_1 ~ treatment +", controls_formula)), 
-               data = el1_data, 
-               weights = ~w1, 
-               cluster = ~areaid)
+# Eliminar aleatoriamente el 5% de las observaciones
+BD_1 <- BD_0 %>% sample_frac(0.95)
 
-#Regresión Tabla 2 columna 3 anymfi_1
-mod_3 <- feols(as.formula(paste("anymfi_1 ~ treatment +", controls_formula)), 
-                    data = el1_data, 
-                    weights = ~w1,
-                    cluster = ~areaid)
+# Restringir el tamaño del área hasta el percentil 95
 
-#Extraer coeficientes y errores estándar
-coef_mod_1 <- round(coef(mod_1)["treatment"], 3)
-se_mod_1 <- round(se(mod_1)["treatment"], 3)
-pval_mod_1 <- round(pvalue(mod_1)["treatment"], 3)
-
-coef_mod_3 <- round(coef(mod_3)["treatment"], 3)
-se_mod_3 <- round(se(mod_3)["treatment"], 3)
-pval_mod_3 <- round(pvalue(mod_3)["treatment"], 3)
-
-#Crear tabla de resultados
-results_1_3 <- data.frame(
-  Variable = c("Spandana (Columna 1)", "Any MFI (Columna 3)"),
-  Coeficiente = c(coef_mod_1, coef_mod_3),
-  Error_Estandar = c(se_mod_1, se_mod_3),
-  P_valor = c(pval_mod_1, pval_mod_3),
-  Observaciones = c(nobs(mod_1), nobs(mod_3))
-)
-
-# #Mostrar tabla
-# cat("\n=== RESULTADOS PREGUNTA 2b ===\n")
-# print(results_1_3)
-
-etable(mod_1, mod_3,
-       title = "Tabla 2, Panel A - Efecto del Tratamiento en Acceso a Crédito",
-       headers = c("Spandana", "Any MFI"),
-       keep = "treatment",
-       digits = 4)
+percentil_95 <- quantile(BD_1$geoarea80, 0.95, na.rm = TRUE)
+BD_1 <- BD_1 %>% filter(geoarea80 <= percentil_95)
 
 ```
 
+
+**Respuesta:** A continuación, presentamos el desarrollo de los modelos.
+
 ```{r warning=FALSE, message=FALSE}
-#Variables de control especificadas
-controls_formula_1 <- "area_pop_base + area_business_total_base + area_exp_pc_mean_base + 
-                        area_literate_head_base + area_literate_base"
+# Modelo 1: Sin controles y sin efectos fijos de área
 
-#Regresión Tabla 3 Expenses Columna 3
-mod_3_3 <- feols(as.formula(paste("bizexpense_1 ~ treatment+", controls_formula_1)), 
-               data = el1_data, 
-               weights = ~w1, 
-               cluster = ~areaid)
+mod_1 <- feols(B ~ globocoverage1 | year, 
+               data = BD_1, 
+               weights = BD_1$weight, 
+               cluster = "amc_code")
 
-#Regresión Tabla 3 profit Columna 4
-mod_3_4 <- feols(as.formula(paste("bizprofit_1 ~ treatment+", controls_formula_1)), 
-               data = el1_data, 
-               weights = ~w1, 
-               cluster = ~areaid)
+# Modelo 2: Sin controles, pero con efectos fijos de área (amc_code)
 
-#Extraer coeficientes y errores estándar con 4 cifras significativas
-coef_expenses <- round(coef(mod_3_3)["treatment"], 4)
-se_expenses <- round(se(mod_3_3)["treatment"], 4)
-pval_expenses <- round(pvalue(mod_3_3)["treatment"], 4)
+mod_2 <- feols(B ~ globocoverage1 | year + amc_code, 
+               data = BD_1, 
+               weights = BD_1$weight, 
+               cluster = "amc_code")
 
-coef_profit <- round(coef(mod_3_4)["treatment"], 4)
-se_profit <- round(se(mod_3_4)["treatment"], 4)
-pval_profit <- round(pvalue(mod_3_4)["treatment"], 4)
+# Modelo 3: Con controles y con efectos fijos de área
 
-results_2c <- data.frame(
-  Variable = c("Gastos Negocio (Col 3)", "Ganancias Negocio (Col 4)"),
-  Coeficiente = c(coef_expenses, coef_profit),
-  Error_Estandar = c(se_expenses, se_profit),
-  P_valor = c(pval_expenses, pval_profit),
-  Observaciones = c(nobs(mod_3_3), nobs(mod_3_4))
-)
+mod_3 <- feols(B ~ globocoverage1 + rural + catholic + yrs_edu + married + 
+                 yrsedu_head + age + stock + ipc_renta + wealth_noTV + Doctors +
+                 agesq + stocksq | year + amc_code, 
+               data = BD_1, 
+               weights = BD_1$weight, 
+               cluster = "amc_code")
 
-# cat("\n=== RESULTADOS PREGUNTA 2c ===\n")
-# print(results_2c)
+# Resultado de los modelos
 
-#Mostrar tabla
-
-etable(mod_3_3, mod_3_4,
-       title = "Tabla 3, Panel A - Actividades de Autoempleo",
-       headers = c("Gastos (Col 3)", "Ganancias (Col 4)"),
-       keep = "treatment",
+etable(mod_1, mod_2, mod_3,
+       title = "Efecto de la Cobertura de Globo en la Probabilidad de nacimientos",
+       headers = c("Modelo 1", "Modelo 2", "Modelo 3"),
+       keep = "globocoverage1",
        digits = 4)
-
 ```
 
+
+Manual avanzado de R markdown: https://rpubs.com/ricardo/14631 
+
+## Segundo Punto
+2. Mencione dos de los retos de identificación mencionados por los autores sobre esta estimación y la forma como se puede corregir con una técnica econométrica. (**Nota:** Puede encontrarlos en la introducción del artículo, página 3). 
+
+### Solución Segundo Punto
+
+**Respuesta:** 
+i) El primer reto de identificación es la posibilidad que la presencia de Globo puede estar correlacionada con determinantes no observadas de la fertilidad.
+
+ii) 
+
+## Tercer Punto
+
+3.	Estime el modelo (3) del literal c, restringiendo los datos a aquellas mujeres con edad entre i) 15-24 ii) 25-34 iii) 35-44 presente sus resultados en una misma tabla con cada modelo en una columna distinta (3 modelos). 
+
+### Solución tercer Punto
+
 ```{r warning=FALSE, message=FALSE}
-#Calcular tasa de cumplimiento
-compliance_rate_df <- el1_data %>%
-  summarise(
-    #Proporción que toma MFI en áreas tratadas
-    treated_take_mfi = weighted.mean(anymfi_1[treatment == 1], w1[treatment == 1], na.rm = TRUE),
-    #Proporción que toma MFI en áreas control  
-    control_take_mfi = weighted.mean(anymfi_1[treatment == 0], w1[treatment == 0], na.rm = TRUE),
-    #Tasa de cumplimiento = diferencia
-    compliance = treated_take_mfi - control_take_mfi
-  )
-# cat("\n=== Tasa de Cumplimiento ===\n")
-print(compliance_rate_df)
+
+# Filtrar los datos por rangos de edad
+
+BD_15_24 <- BD_1 %>% filter(age >= 15 & age <= 24)
+BD_25_34 <- BD_1 %>% filter(age >= 25 & age <= 34)
+BD_35_44 <- BD_1 %>% filter(age >= 35 & age <= 44)
+
+# Modelos con restricción de edad
+
+mod_3_1 <- feols(B ~ globocoverage1 + rural + catholic + yrs_edu + married + 
+                 yrsedu_head + age + stock + ipc_renta + wealth_noTV + Doctors +
+                 agesq + stocksq | year + amc_code, 
+               data = BD_15_24, 
+               weights = BD_15_24$weight, 
+               cluster = "amc_code")
+
+mod_3_2 <- feols(B ~ globocoverage1 + rural + catholic + yrs_edu + married + 
+                 yrsedu_head + age + stock + ipc_renta + wealth_noTV + Doctors +
+                 agesq + stocksq | year + amc_code, 
+               data = BD_25_34, 
+               weights = BD_25_34$weight, 
+               cluster = "amc_code")
+
+mod_3_2 <- feols(B ~ globocoverage1 + rural + catholic + yrs_edu + married + 
+                 yrsedu_head + age + stock + ipc_renta + wealth_noTV + Doctors +
+                 agesq + stocksq | year + amc_code, 
+               data = BD_35_44, 
+               weights = BD_35_44$weight, 
+               cluster = "amc_code")
+
+etable(mod_3_1, mod_3_2, mod_3_2,
+       title = "Efecto de la Cobertura de Globo en la Probabilidad de nacimientos por Rangos de Edad",
+       headers = c("Modelo 15-24", "Modelo 25-34", "Modelo 35-44"),
+       keep = "globocoverage1",
+       digits = 4)
+
 ```
 
 ## Cuarto Punto
@@ -233,3 +205,18 @@ iii) riqueza del hogar (wealth_noTV).
 •	Interprete los resultados del efecto heterogéneo estimado en el modelo y concluya sobre estos. (Nota: un efecto heterogéneo se estima mediante agregar al modelo estándar una interacción entre el tratamiento y la variable que se quiere estudiar, también recuerde que las variables de la interacción deben estár presentes de manera individual en el modelo)
 
 ### Solución cuarto Punto
+
+```{r warning=FALSE, message=FALSE}
+
+# Modelo con efectos heterogéneos
+
+mod_het <- feols(B ~ globocoverage1 + globocoverage1*yrs_edu +rural + catholic + yrs_edu + 
+                   married + yrsedu_head + age + stock + ipc_renta + wealth_noTV + Doctors +
+                 agesq + stocksq | year + amc_code, 
+               data = BD_1, 
+               weights = BD_1$weight, 
+               cluster = "amc_code")
+
+summary(mod_het)
+```
+
