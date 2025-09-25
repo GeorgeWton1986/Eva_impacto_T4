@@ -191,6 +191,8 @@ etable(mod_3_1, mod_3_2, mod_3_2,
 
 ```
 
+**Respuesta:**
+
 ## Cuarto Punto
 
 4.	Escoja una de las siguientes variables y estime un modelo con efectos heterogéneos:
