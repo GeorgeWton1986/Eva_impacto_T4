@@ -99,7 +99,6 @@ BD_1 <- BD_1 %>% filter(geoarea80 <= percentil_95)
 
 ```
 
-
 **Respuesta:** A continuación, presentamos el desarrollo de los modelos.
 
 ```{r warning=FALSE, message=FALSE}
@@ -135,7 +134,6 @@ etable(mod_1, mod_2, mod_3,
        digits = 4)
 ```
 
-
 Manual avanzado de R markdown: https://rpubs.com/ricardo/14631 
 
 ## Segundo Punto
@@ -144,9 +142,9 @@ Manual avanzado de R markdown: https://rpubs.com/ricardo/14631
 ### Solución Segundo Punto
 
 **Respuesta:** 
-i) El primer reto de identificación es la posibilidad que la presencia de Globo puede estar correlacionada con determinantes no observadas de la fertilidad.
+i) El primer reto de identificación es la posibilidad que la presencia de Globo puede estar correlacionada con determinantes no observadas de la fertilidad. La entrega de globo puede esta correlacionada con las tendencias de fertilidad preexistentes. Esto fue corregido mediante la regresión de la fertilidad sobre sobre un conjunto de variables dummies que van desde 9 años antes y 9 años después de la entrada de Globo en las áreas estudiadas.
 
-ii) 
+ii) El segundo reto de identificación es la posibilidad de presentar una endogeniedad en el momento en que Globo entro a diferentes áreas. Entendiendo que podría ser una estrategia comercial sobre áreas ricas que pueden generar ingresos por publicidad. La corrección econométrica fue controlar por medio de la educación, riqueza y por el indice de potencial de consumo, este último es usado por Globo para evaluar los mercados nuevos. Adiconalmente, los autores probaron los resultados con pruebas de robuztes.
 
 ## Tercer Punto
 
@@ -201,14 +199,11 @@ i) años de educación de cabeza de hogar (yrsedu_head)
 ii) años de educación de la mujer  (yrs_edu) 
 iii) riqueza del hogar (wealth_noTV). 
 
-
-•	Interprete los resultados del efecto heterogéneo estimado en el modelo y concluya sobre estos. (Nota: un efecto heterogéneo se estima mediante agregar al modelo estándar una interacción entre el tratamiento y la variable que se quiere estudiar, también recuerde que las variables de la interacción deben estár presentes de manera individual en el modelo)
-
 ### Solución cuarto Punto
 
 ```{r warning=FALSE, message=FALSE}
 
-# Modelo con efectos heterogéneos
+# Modelo con efectos heterogéneos con años de educación de la mujer (yrs_edu)
 
 mod_het <- feols(B ~ globocoverage1 + globocoverage1*yrs_edu +rural + catholic + yrs_edu + 
                    married + yrsedu_head + age + stock + ipc_renta + wealth_noTV + Doctors +
@@ -218,8 +213,19 @@ mod_het <- feols(B ~ globocoverage1 + globocoverage1*yrs_edu +rural + catholic +
                cluster = "amc_code")
 etable(mod_het,
        title = "Efecto Globo en la Probabilidad de nacimientos con Efectos Heterogéneos por Años de Educación de la mujer",
-       keep = c("globocoverage1", "globocoverage1:yrs_edu"),
+       keep = c("globocoverage1", "globocoverage1:yrs_edu", "yrs_edu"),
        digits = 4)
 ```
 
-**Respuesta:**
+•	Interprete los resultados del efecto heterogéneo estimado en el modelo y concluya sobre estos. (Nota: un efecto heterogéneo se estima mediante agregar al modelo estándar una interacción entre el tratamiento y la variable que se quiere estudiar, también recuerde que las variables de la interacción deben estár presentes de manera individual en el modelo)
+
+**Respuesta:** En general las variables de cobertura de Globo, los años de educación de la mujer y la interacción son significativos en el estudio de efecto. Ahora, me centraré en explicar los resultados por cada uno de los coeficientes:
+
+**globocoverage1:** En mujeres sin educación (0 años), la cobertura de Globo reduce la probabilidad de nacimientos en 1.42 puntos porcentuales.
+
+
+**yrs_edu:** En área sin cobertura de Globo, cada año adicional de educación reduce la probabilidad de dar a luz en 0.05 puntos porcentuales.
+
+**globocoverage1:yrs_edu:** La interacción presenta el cambio del efecto de la cobertura de Globo por cada año adicional de educación de la mujer. Es decir, un aumento de un año adicional en la educación de la mujer, el efecto de Globo reduce en 0.16 puntos porcentuales, como resultado las mujeres más educadas son menos influenciadas por las telenovelas.
+
+**En conclusión:** Aumentar los años de educación en mujeres se relaciona con un efecto menor a causa de la influencia de las telenovelas. Porqué, las mujeres más educadas tienen la posibilidad de informarse mejor.
