@@ -8,7 +8,7 @@ output:
   word_document: default
 ---
 
-## Introduccion
+## Introducción
 
 En su artículo “Soap Operas and Fertility: Evidence from Brazil” , La Ferrara et al. (2012) estudian la influencia de la televisión, y específicamente de las telenovelas, sobre las preferencias de las mujeres respecto a sus preferencias sobre su vida reproductiva. En particular, aprovechan la llegada de una cadena de televisión (Globo) en ciertas áreas para estimar la probabilidad de dar a luz. Adicionalmente, evalúan la existencia de efectos heterogéneos en variables como la edad, nivel educativo y riqueza de las mujeres. Para responder sus preguntas, los autores usan la metodología de Diferencias en Diferencias con regresión y efectos fijos. 
 
