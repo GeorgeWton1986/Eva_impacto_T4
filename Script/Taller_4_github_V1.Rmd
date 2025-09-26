@@ -39,7 +39,7 @@ Donde:
 
 b)	¿Cuál es el supuesto de identificación detrás de este modelo?
 
-**Respuesta:** El modelo de diferencias en diferencias (DiD) reconoce el supuesto de identificación mediante las tendencias paralelas. Esto significa, el cambio en la variable resultado para el grupo de control es igual al cambio en la variable resultado para el grupo de tratamiento, sino hubiera sido tratado. Por lo tanto, El cambio en la probabilidad de fertilidad esperada en el grupo de control (antes y después de que Globo llegue a las áreas tratadas) sería igual al cambio en la probabilidad de fertilidad esperada en el grupo tratado si este no hubiera recibido el tratamiento. $[E[y_{ijt}|G_{jt}=0,t=1]-E[y_{ijt}|G_{jt}=0,t=0]] - [[E[y_{ijt}|G_{jt}=1,t=1]-E[y_{ijt}|G_{jt}=1,t=0]]$
+**Respuesta:** El modelo de diferencias en diferencias (DiD) reconoce el supuesto de identificación mediante las tendencias paralelas. Esto significa, el cambio en la variable resultado para el grupo de control es igual al cambio en la variable resultado para el grupo de tratamiento, sino hubiera sido tratado. Por lo tanto, el cambio en la probabilidad de fertilidad esperada en el grupo de control (antes y después de que Globo llegue a las áreas tratadas) sería igual al cambio en la probabilidad de fertilidad esperada en el grupo tratado si este no hubiera recibido el tratamiento. $[E[y_{ijt}|G_{jt}=0,t=1]-E[y_{ijt}|G_{jt}=0,t=0]] - [[E[y_{ijt}|G_{jt}=1,t=1]-E[y_{ijt}|G_{jt}=1,t=0]]$
 
 ### Generalidades de R
 ```{r}
@@ -125,13 +125,12 @@ mod_3 <- feols(B ~ globocoverage1 + rural + catholic + yrs_edu + married +
                weights = BD_1$weight, 
                cluster = "amc_code")
 
-# Resultado de los modelos
-
+# Resultado "Efecto de la Cobertura de Globo en la Probabilidad de nacimientos"
 etable(mod_1, mod_2, mod_3,
-       title = "Efecto de la Cobertura de Globo en la Probabilidad de nacimientos",
        headers = c("Modelo 1", "Modelo 2", "Modelo 3"),
        keep = "globocoverage1",
-       digits = 4)
+       digits = 4,
+       se.below = TRUE)
 ```
 
 Manual avanzado de R markdown: https://rpubs.com/ricardo/14631 
@@ -176,22 +175,26 @@ mod_3_2 <- feols(B ~ globocoverage1 + rural + catholic + yrs_edu + married +
                weights = BD_25_34$weight, 
                cluster = "amc_code")
 
-mod_3_2 <- feols(B ~ globocoverage1 + rural + catholic + yrs_edu + married + 
+mod_3_3 <- feols(B ~ globocoverage1 + rural + catholic + yrs_edu + married + 
                  yrsedu_head + age + stock + ipc_renta + wealth_noTV + Doctors +
                  agesq + stocksq | year + amc_code, 
                data = BD_35_44, 
                weights = BD_35_44$weight, 
                cluster = "amc_code")
 
-etable(mod_3_1, mod_3_2, mod_3_2,
-       title = "Efecto de la Cobertura de Globo en la Probabilidad de nacimientos por Rangos de Edad",
+# Resultado "Efecto de la Cobertura de Globo en la Probabilidad de nacimientos por Rangos de Edad
+
+etable(mod_3_1, mod_3_2, mod_3_3,
        headers = c("Modelo 15-24", "Modelo 25-34", "Modelo 35-44"),
        keep = "globocoverage1",
-       digits = 4)
+       digits = 4,
+       se.below = TRUE)
 
 ```
 
-**Respuesta:**
+**Respuesta:** Para el grupo de mujeres entre 15 y 34 años, la influencia por causa del ingreso de Globo no es estadisticamente significativa. El grupo de mujeres entre 25 y 34 años, la cobertura de Globo es estadisticamente significativa al 1% y estima que la probabilidad de nacimientos se reduce en 1.12 puntos porcentuales. Por último, las mujeres con un rango de edad entre 35 y 44 años, la presencia de Globo es estadisticamente significativa al 10% y cálcula una disminución en 0.53 puntos porcentuales la probabilidad de nacimientos.
+
+**En conclusión:** Las mujeres entre los 25 y 34 años son influenciadas por la telenovelas de Globo sobre la planificación familiar. Las mujeres más jovenes no tienen influencia alguna por parte de las telenovelas, dado que aún no les interesa iniciar su vida reproductiva.
 
 ## Cuarto Punto
 
@@ -213,10 +216,14 @@ mod_het <- feols(B ~ globocoverage1 + globocoverage1*yrs_edu +rural + catholic +
                data = BD_1, 
                weights = BD_1$weight, 
                cluster = "amc_code")
+
+# Resultado "Efecto Globo en la Probabilidad de nacimientos con Efectos Heterogéneos 
+# por Años de Educación de la mujer"
+
 etable(mod_het,
-       title = "Efecto Globo en la Probabilidad de nacimientos con Efectos Heterogéneos por Años de Educación de la mujer",
        keep = c("globocoverage1", "globocoverage1:yrs_edu", "yrs_edu"),
-       digits = 4)
+       digits = 4,
+       se.below = TRUE)
 ```
 
 •	Interprete los resultados del efecto heterogéneo estimado en el modelo y concluya sobre estos. (Nota: un efecto heterogéneo se estima mediante agregar al modelo estándar una interacción entre el tratamiento y la variable que se quiere estudiar, también recuerde que las variables de la interacción deben estár presentes de manera individual en el modelo)
@@ -228,6 +235,6 @@ etable(mod_het,
 
 **yrs_edu:** En área sin cobertura de Globo, cada año adicional de educación reduce la probabilidad de dar a luz en 0.05 puntos porcentuales.
 
-**globocoverage1:yrs_edu:** La interacción presenta el cambio del efecto de la cobertura de Globo por cada año adicional de educación de la mujer. Es decir, un aumento de un año adicional en la educación de la mujer, el efecto de Globo reduce en 0.16 puntos porcentuales, como resultado las mujeres más educadas son menos influenciadas por las telenovelas.
+**globocoverage1:yrs_edu:** La interacción presenta el cambio del efecto de la cobertura de Globo por cada año adicional de educación de la mujer. Es decir, el efecto de Globo reduce en 0.16 puntos porcentuales con un aumento de un año adicional en la educación de la mujer. Por lo tanto, las mujeres más educadas son menos influenciadas por las telenovelas.
 
 **En conclusión:** Aumentar los años de educación en mujeres se relaciona con un efecto menor a causa de la influencia de las telenovelas. Porqué, las mujeres más educadas tienen la posibilidad de informarse mejor.
