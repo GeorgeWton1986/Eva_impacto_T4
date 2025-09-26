@@ -30,16 +30,23 @@ y_{ijt} = X_{ijt}\beta + \gamma G_{jt}+ \mu_{j}+ \lambda_{t}+\epsilon_{ijt} \qua
 \end{align}
 
 Donde:
-- $y_{ijt}$ Es igual a 1 si la mujer $i$ vive en el área $j$ y da a luz a un niño en año $t$.
-- $X_{ijt}$ Son los controles que varian en el tiempo del individuo y a nivel de AMC. 
-- $G_{jt}$ Es una dicotoma que toma el valor de 1, si el área $j$ recibe señal de Rede Globo al menos un año antes del año $t$.
-- $\mu_{j}$ Efectos fijos del área
-- $\lambda_{t}$ Efectos fijos de tiempo
-- $\epsilon_{ijt}$ es el término de error.
+
+$y_{ijt}$ Es igual a 1 si la mujer $i$ vive en el área $j$ y da a luz a un niño en año $t$.
+
+$X_{ijt}$ Son los controles que varian en el tiempo del individuo y a nivel de AMC. 
+
+$G_{jt}$ Es una dicotoma que toma el valor de 1, si el área $j$ recibe señal de Rede Globo al menos un año antes del año $t$.
+
+$\mu_{j}$ Efectos fijos del área
+
+$\lambda_{t}$ Efectos fijos de tiempo
+
+$\epsilon_{ijt}$ es el término de error.
 
 b)	¿Cuál es el supuesto de identificación detrás de este modelo?
 
-**Respuesta:** El modelo de diferencias en diferencias (DiD) reconoce el supuesto de identificación mediante las tendencias paralelas. Esto significa, el cambio en la variable resultado para el grupo de control es igual al cambio en la variable resultado para el grupo de tratamiento, sino hubiera sido tratado. Por lo tanto, el cambio en la probabilidad de fertilidad esperada en el grupo de control (antes y después de que Globo llegue a las áreas tratadas) sería igual al cambio en la probabilidad de fertilidad esperada en el grupo tratado si este no hubiera recibido el tratamiento. $[E[y_{ijt}|G_{jt}=0,t=1]-E[y_{ijt}|G_{jt}=0,t=0]] - [[E[y_{ijt}|G_{jt}=1,t=1]-E[y_{ijt}|G_{jt}=1,t=0]]$
+**Respuesta:** 
+El modelo de diferencias en diferencias (DiD) reconoce el supuesto de identificación mediante las tendencias paralelas. Esto significa, el cambio en la variable resultado para el grupo de control es igual al cambio en la variable resultado para el grupo de tratamiento, sino hubiera sido tratado. Por lo tanto, el cambio en la probabilidad de fertilidad esperada en el grupo de control (antes y después de que Globo llegue a las áreas tratadas) sería igual al cambio en la probabilidad de fertilidad esperada en el grupo tratado si este no hubiera recibido el tratamiento. $[E[y_{ijt}|G_{jt}=0,t=1]-E[y_{ijt}|G_{jt}=0,t=0]] - [[E[y_{ijt}|G_{jt}=1,t=1]-E[y_{ijt}|G_{jt}=1,t=0]]$
 
 ### Generalidades de R
 ```{r}
@@ -140,7 +147,8 @@ Manual avanzado de R markdown: https://rpubs.com/ricardo/14631
 
 ### Solución Segundo Punto
 
-**Respuesta:** 
+**Respuesta:**
+
 i) El primer reto de identificación es la posibilidad que la presencia de Globo puede estar correlacionada con determinantes no observadas de la fertilidad. La entrega de globo puede esta correlacionada con las tendencias de fertilidad preexistentes. Esto fue corregido mediante la regresión de la fertilidad sobre sobre un conjunto de variables dummies que van desde 9 años antes y 9 años después de la entrada de Globo en las áreas estudiadas.
 
 ii) El segundo reto de identificación es la posibilidad de presentar una endogeniedad en el momento en que Globo entro a diferentes áreas. Entendiendo que podría ser una estrategia comercial sobre áreas ricas que pueden generar ingresos por publicidad. La corrección econométrica fue controlar por medio de la educación, riqueza y por el indice de potencial de consumo, este último es usado por Globo para evaluar los mercados nuevos. Adiconalmente, los autores probaron los resultados con pruebas de robuztes.
